@@ -1,17 +1,21 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+import aiosqlite
 import os
-from .Aviation_Utils.Aviation_Utils import airport_lookup, airport_distance, get_metar, get_navaid
+from .Aviation_Utils.Aviation_Utils import airport_lookup, airport_distance, get_metar, get_navaid, airport_autocomplete
 
 db_path = os.path.join(os.path.dirname(__file__), "Aviation_Databases", "airports.db")
 
 class Airport_Lookup(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot, db, cursor):
         self.bot = bot
+        self.db = db
+        self.cursor = cursor
     
     @app_commands.command(name="airport", description="Gives data about an airport")
     @app_commands.describe(airport="The Icao code of the airport we want to see")
+    @app_commands.autocomplete(airport=airport_autocomplete)
     async def airport(self, interaction:discord.Interaction, airport: str):
         await interaction.response.defer()
         airport = airport_lookup(airport)
@@ -57,7 +61,6 @@ class Airport_Lookup(commands.Cog):
         second_airport="The icao code of the second airport"
     )
     async def airport_distance(self, interaction:discord.Interaction, first_airport: str, second_airport: str):
-        import aiosqlite
 
         await interaction.response.defer()
 
@@ -93,4 +96,6 @@ class Airport_Lookup(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(Airport_Lookup(bot))
+    db = await aiosqlite.connect(db_path)
+    cursor = await db.cursor()
+    await bot.add_cog(Airport_Lookup(bot, db, cursor))

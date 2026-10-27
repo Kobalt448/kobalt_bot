@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 import asyncio
 import aiosqlite
 import os
-from .Aviation_Utils.Aviation_Utils import get_metar, get_current_zulu, random_flight, airport_lookup, send_hoppie_telex, get_taf
+from .Aviation_Utils.Aviation_Utils import get_metar, get_current_zulu, random_flight, airport_lookup, send_hoppie_telex, get_taf, airport_autocomplete
 from .Aviation_Utils.Aviation_Math import hpa_to_inhg, inhg_to_hpa
 
 db_requests_path = os.path.join(os.path.dirname(__file__), "Aviation_Databases", "requests.db")
@@ -121,6 +121,7 @@ class Weather(commands.Cog):
     # TODO: You can write whatever the fuck you want on the metar and it'll try to grab it :sob:, fix that
     # TODO: Download cache files instead of pinging the api
     @app_commands.command(name="metar", description="Gets the metar for an airport")
+    @app_commands.autocomplete(airport=airport_autocomplete)
     @app_commands.describe(airport="Icao code of the airport")
     async def metar(self, interaction:discord.Interaction, airport:str):
         await interaction.response.defer()

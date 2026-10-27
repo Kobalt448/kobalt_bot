@@ -13,6 +13,7 @@ Current functions are:
 
 
 import sqlite3
+import aiosqlite
 import os
 import requests
 from datetime import datetime, timezone
@@ -20,8 +21,9 @@ import aiohttp
 from dataclasses import dataclass
 SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php"
 from . import Aviation_Math
-from dotenv import load_dotenv
 from hoppie_connector import *
+import discord
+from discord import app_commands
 
 db_path = os.path.join(os.path.dirname(__file__), '..', "Aviation_Databases", "airports.db")
 navaid_db = os.path.join(os.path.dirname(__file__), '..', "Aviation_Databases", "navaids.db")
@@ -682,6 +684,30 @@ def random_flight(departure: str = None, arrival: str = None, min_distance=100, 
                 other, distance = random.choice(matches)
                 return (origin, other, distance)
     return 4
+
+async def search_airports(current:str):
+    """Command that returns a set of 25 airports, used for autocompletition"""
+
+    db = await aiosqlite.connect(db_path)
+    cursor = await db.cursor()
+    like = f"%{current}%"
+
+    sql = """ SELECT ident, name FROM airports
+        WHERE ident LIKE ? OR name LIKE ? 
+        ORDER BY (ident LIKE ?) DESC, ident LIMIT 25
+        """
+    await cursor.execute(sql, (like, like, f"{current}%"))
+    result = await cursor.fetchall()
+    await db.close()
+    return result
+
+async def airport_autocomplete(interaction:discord.Interaction, current:str):
+    rows = await search_airports(current)
+
+    return [
+        app_commands.Choice(name=f"{ident} - {name}"[:100], value=ident)
+        for ident, name in rows
+    ]
 
 connection:HoppieConnector = HoppieConnector(station_name="ORI", logon=logon)
 
