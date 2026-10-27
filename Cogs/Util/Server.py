@@ -24,6 +24,8 @@ class Server(commands.Cog):
     @app_commands.command(name="welcome_message", description="Assigns an entry message for the server")
     @app_commands.describe(message="The message that will be said when someone enters the server. If it's left blank, the welcome message will be disables")
     async def welcome_message(self, interaction:discord.Interaction, message:str=None):
+        await interaction.response.send_message("This command has been temporarely disabled.")
+        return
         await interaction.response.defer()
 
         if message == "NULL":

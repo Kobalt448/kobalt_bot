@@ -12,7 +12,7 @@ class Help(commands.Cog):
             title="Orion bot, Help command",
             color=discord.Colour.gold(),
             description="This commands shows information of several commands belonging to the bot, choose one of the categories below to read on the commands.\n" \
-            "In addition, Orion has other hidden commands that can be accessed with the prefix S!. This commands are usually secrets or meant for debugging."
+            "In addition, Orion has other hidden commands that can be accessed with the prefix S!. These commands are usually secrets or meant for debugging."
         )
 
 
