@@ -162,6 +162,7 @@ class Acars(commands.Cog):
 
         messages, delay = await asyncio.to_thread (self.connection.poll)
 
+
         for msg in messages:
             print(f"FROM: {msg.get_from_name()}")
             print(f"TO: {msg.get_to_name()}")
@@ -173,6 +174,11 @@ class Acars(commands.Cog):
             # General conditions for these commands:
             # Bot will only answer when needed.
             # No answer either means the command doesn't exist. Or that it worked.
+
+            # Is from self
+            if msg.get_from_name() == STATION:
+                print("Message from myself")
+                continue
             pattern = "^([A-Z]{5})(.*)$"
 
             result = re.split(pattern, msg.get_message())
@@ -200,6 +206,7 @@ class Acars(commands.Cog):
                     await asyncio.sleep(15)
                     send_hoppie_telex(msg.get_from_name(), f"{arguments[0]} NOT IN DATABASE")
                     continue
+
 
                 if len(arguments) == 2:
                     await self.telex_metar(msg.get_from_name(), arguments[0], arguments[1])
