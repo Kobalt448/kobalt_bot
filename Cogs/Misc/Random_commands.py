@@ -46,7 +46,8 @@ class Random_commands(commands.Cog):
                     "La vida me pide a gritos que no ayude a nadie y sea un hijo de puta basto",
                     "Lo llaman injustice pero las mujeres pueden elegir, los hombres rara vez podemos",
                     "He llegado al punto en que si me importas te pregunto porque, si no,en visto y .",
-                    "Nos deberian pagar por ver los partidos de Las Palmas")
+                    "Nos deberian pagar por ver los partidos de Las Palmas",
+                    "NECESITO BESTIA YA")
         
         await ctx.send(f'"*{random.choice(responses)}"*')
 
